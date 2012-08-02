@@ -1,0 +1,13 @@
+doctype 5
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    title= ""
+    if locals.env == 'production'
+      link(rel="stylesheet", href="stylesheet/style.min.css")
+      script(src="javascript/app.min.js")
+    else
+      link(rel="stylesheet", href="/vendor/stylesheet/bootstrap/bootstrap.css")
+      link(rel="stylesheet", href="/stylesheet/screen.css")
+      script(src="/ender/ender.js")
+      script(src="/javascript/app.js")

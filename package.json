@@ -1,0 +1,22 @@
+{
+  "name": "progfonts",
+  "version": "0.0.1",
+  "description": "Programming fonts showcase",
+  "author": "Kiyoshi '13k' Murata",
+  "license": "WTFPL",
+  "repository": "git://github.com/commita/progfonts.git",
+  "dependencies": {},
+  "devDependencies": {
+    "ender": "~> 0.8.11",
+    "jade": "~> 0.27.0",
+    "coffee-script": "~> 1.3.3",
+    "stylus": "~> 0.28.2",
+    "less": "~> 1.3.0",
+    "jasmine-node": "~> 1.0.26",
+    "recess": "*",
+    "uglify-js": "*"
+  },
+  "scripts": {
+    "test": "jasmine-node --coffee spec"
+  }
+}
