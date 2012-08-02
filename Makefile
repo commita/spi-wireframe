@@ -2,14 +2,6 @@
 # paths
 #
 
-# binaries
-bin_path=./node_modules/.bin
-jade=$(bin_path)/jade
-coffee=$(bin_path)/coffee
-stylus=$(bin_path)/stylus
-recess=$(bin_path)/recess
-ender=$(bin_path)/ender
-uglify=$(bin_path)/uglifyjs
 # sources
 coffee_path=javascript
 stylus_path=stylesheet
@@ -28,9 +20,11 @@ target_path=public
 # html
 html_file=$(compile_path)/index.html
 # javascript
-ender_file=ender/ender.min.js
 coffee_files=$(wildcard $(coffee_path)/*.coffee)
 javascript_files=$(patsubst $(coffee_path)/%.coffee,$(js_compile_path)/%.js,$(coffee_files))
+# will grab this dynamically from package.json
+js_combined_file:=$(shell node -e "console.log(require('./package').ender.main)")
+ender_file=$(js_compile_path)/ender.min.js
 # stylesheets
 stylus_files=$(wildcard $(stylus_path)/*.styl)
 stylesheet_files=$(patsubst $(stylus_path)/%.styl,$(css_compile_path)/%.css,$(stylus_files))
@@ -43,10 +37,8 @@ bootstrap_file=$(css_compile_path)/bootstrap.min.css
 # html
 html_target_file=$(target_path)/index.html
 # javascript
-js_combined_file=$(target_path)/javascript/app.js
 js_target_file=$(target_path)/javascript/app.min.js
 # stylesheet
-css_combined_file=$(target_path)/stylesheet/style.css
 css_target_file=$(target_path)/stylesheet/style.min.css
 
 #
@@ -58,22 +50,22 @@ css_target_file=$(target_path)/stylesheet/style.min.css
 compile-html: $(html_file)
 $(compile_path)/%.html: %.jade
 	@mkdir -p `dirname $@`
-	$(jade) -o '{ "env": "production" }' -O $(compile_path) $^
+	jade -o '{ "env": "production" }' -O $(compile_path) $^
 
 compile-javascript: $(javascript_files)
 $(js_compile_path)/%.js: $(coffee_path)/%.coffee
 	@mkdir -p `dirname $@`
-	$(coffee) -o `dirname $@` -c $^
+	coffee -o `dirname $@` -c $^
 
 compile-stylesheet: $(stylesheet_files)
 $(css_compile_path)/%.css: $(stylus_path)/%.styl
 	@mkdir -p `dirname $@`
-	$(stylus) --compress --out `dirname $@` $^
+	stylus --compress --out `dirname $@` $^
 
 compile-bootstrap: $(bootstrap_file)
 $(bootstrap_file): $(bootstrap_path)/bootstrap.less
 	@mkdir -p `dirname $@`
-	$(recess) --compile --compress $^ > $@
+	recess --compile --compress $^ > $@
 
 # combination phase
 
@@ -81,26 +73,27 @@ $(html_target_file): compile-html
 	@mkdir -p `dirname $@`
 	cp -f $(html_file) $@
 
-combine-javascript: $(js_combined_file)
+combine-javascript: build-ender
+build-ender: $(ender_file)
+# while node-optimist isn't Lint'able we can't use closure compiler
+# this rule implicitly appends $(js_combined_file) to the final $(ender_file)
+$(ender_file): $(js_combined_file)
+	@mkdir -p `dirname $@`
+	ender build -o `echo $@ | sed -e 's/\.min//'`
+
 $(js_combined_file): compile-javascript
 	@mkdir -p `dirname $@`
-	cat $(ender_file) $(javascript_files) > $@
+	cat $(javascript_files) > $@
 
-# while node-optimist isn't Lint'able we can't use closure compiler
-# $(ender) compile --use $(ender_file) --output $@ $(javascript_files)
+# if we can use `ender compile`, then this step would be unecessary
 $(js_target_file): combine-javascript
 	@mkdir -p `dirname $@`
-	$(uglify) -o $@ $(js_combined_file)
-
-combine-stylesheet: $(css_combined_file)
-$(css_combined_file): compile-stylesheet compile-bootstrap
-	@mkdir -p `dirname $@`
-	cat $(bootstrap_file) $(stylesheet_files) > $@
+	cp -f $(ender_file) $@
 
 # css is already minified
-$(css_target_file): combine-stylesheet
+$(css_target_file): compile-stylesheet compile-bootstrap
 	@mkdir -p `dirname $@`
-	cp $(css_combined_file) $@
+	cat $(bootstrap_file) $(stylesheet_files) > $@
 
 #
 # high level rules
