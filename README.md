@@ -30,6 +30,7 @@ A wireframe for SPI (Single Page Interface) applications tying these together:
 [stylus]: http://learnboost.github.com/stylus
 [bootstrap]: http://twitter.github.com/bootstrap
 [jasmine]: http://pivotal.github.com/jasmine
+[handlebars]: http://handlebarsjs.com
 
 ## Usage
 
