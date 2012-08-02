@@ -1,4 +1,4 @@
-# SPI-Wireframe
+# spi-wireframe
 
 A wireframe for SPI (Single Page Interface) applications tying these together:
 
@@ -41,7 +41,16 @@ Fork this repository and customize, following the minimal structure it expects:
 
 Your HTML code goes into `/index.jade`.
 
+Since one can use some tools for development (assets server, watcher, kicker, 
+etc), it would be difficult (without having a monstrous .gitignore) to have 
+the same include paths for assets, so we are using Jade here to have a 
+minimal environment separation. Inside `index.jade` you can see that we test 
+`locals.env`. This variable is set to `"production"` only at build time, so 
+we can include different files accordinly.
 
+The default setup is currently tuned to be used with [readymade][readymade]. 
+Just `npm install readymade -g` and `readymade -f readymade.make` then go to 
+`http://localhost:1000/index.html` (it will compile assets/templates on the fly).
 
 [readymade]: http://poulejapon.github.com/readymade
 
@@ -53,15 +62,15 @@ At build time, files are compiled to JavaScript, compressed (minified) then
 combined **following alphabetical order**. So if you have dependency between
 files, name them accordingly.
 
-The final version will be combined with ender libraries too. The idea is to
+The final version will be combined with Ender libraries too. The idea is to
 have exactly one final javascript file.
 
 ### CSS via Stylus
 
 Stylesheets stay in `/stylesheet/*.styl`.
 
-The same process happens as to JavaScript files. Compress, name ordered
-combining and single output with bootstrap.
+The same process happens as to JavaScript files: compiling, compressing and 
+name ordered combining into a single output with bootstrap included.
 
 ### Ender packages
 
@@ -69,3 +78,12 @@ It all goes inside `/ender`. `node_modules` is added to the repository.
 
 To change packages, just `cd` into the directory and use the `ender` CLI and
 commit changes.
+
+## Building
+
+```sh
+make clean
+make build
+```
+
+Results goes into `/public`.
