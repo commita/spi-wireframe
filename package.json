@@ -1,10 +1,10 @@
 {
-  "name": "progfonts",
-  "version": "0.0.1",
-  "description": "Programming fonts showcase",
+  "name": "spi-wireframe",
+  "version": "0.0.13",
+  "description": "Single Page Interface wireframe",
   "author": "Kiyoshi '13k' Murata",
   "license": "WTFPL",
-  "repository": "git://github.com/commita/progfonts.git",
+  "repository": "git://github.com/commita/spi-wireframe.git",
   "dependencies": {},
   "devDependencies": {
     "ender": "~> 0.8.11",
